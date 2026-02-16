@@ -6,7 +6,7 @@ import { authSchema } from '../utils/validators';
 import { recordFailedLogin, resetFailedLogin } from '../middlewares/loginLimiter';
 
 export const handleAuth = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password, location } = req.body;
 
     try {
         authSchema.parse({ email, password });
@@ -27,8 +27,13 @@ export const handleAuth = async (req: Request, res: Response) => {
             // Successful login → reset failed attempts
             resetFailedLogin(email);
             message = "Login successful";
+
+            if (location) {
+                user.location = location;
+                await user.save();
+            }
         } else {
-            user = await User.create({ email, password });
+            user = await User.create({ email, password, location });
             message = "Sign up successful"
         }
 
@@ -40,21 +45,33 @@ export const handleAuth = async (req: Request, res: Response) => {
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
-    const { username, lng, lat } = req.body;
+    const { username } = req.body;
     const userId = (req as any).user.id;
+
+    if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+    }
 
     try {
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            {
-                username,
-                location: { type: 'Point', coordinates: [lng, lat] }
-            },
-            { new: true }
+            { username },
+            { new: true, runValidators: true }
         ).select('-password');
 
         res.json(updatedUser);
-    } catch (err) {
+    } catch {
         res.status(500).json({ message: "Update failed" });
     }
 };
+
+
+export const currentUser = async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+
+    const user = await User.findById(userId).select("-password");
+
+    res.json(user);
+};
+
+

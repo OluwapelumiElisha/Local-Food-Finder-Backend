@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 // In-memory failed login tracker
 const failedLoginAttempts: Record<string, { count: number; lastAttempt: number }> = {};
-const MAX_ATTEMPTS = 2;
+const MAX_ATTEMPTS = 5;
 const BLOCK_TIME = 5 * 60 * 1000; // 5 minutes
 
 export const loginLimiter = (req: Request, res: Response, next: NextFunction) => {

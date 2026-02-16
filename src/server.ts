@@ -6,10 +6,12 @@ import logger from './config/logger';
 import connectDB from './config/db';
 import routes from "./routes/index"
 import { notFound } from "./middlewares/not-found"
+import { setupSwagger } from './swagger';
 
 dotenv.config();
 
-const app: Application = express();
+// const app: Application = express();
+const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
@@ -28,6 +30,10 @@ app.use("/api", routes);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to UI/LAUTECH Local Food Finder API');
 });
+
+setupSwagger(app);
+
+
 app.use(notFound);
 
 app.listen(PORT, () => {
