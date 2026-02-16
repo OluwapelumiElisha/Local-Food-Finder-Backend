@@ -16,7 +16,7 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: SERVER_URL
+        url: process.env.SERVER_URL
       },
     ],
   },
