@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import logger from '../src/config/logger';
+import logger from './config/logger';
 import connectDB from './config/db';
 import routes from "./routes/index"
 import { notFound } from "./middlewares/not-found"
