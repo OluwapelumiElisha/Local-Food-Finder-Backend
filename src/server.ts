@@ -23,11 +23,12 @@ app.use(morgan('dev')); // Logs requests to the console
 connectDB()
 
 app.use("/api", routes);
-app.use(notFound);
+
 // Sample Route
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to UI/LAUTECH Local Food Finder API');
 });
+app.use(notFound);
 
 app.listen(PORT, () => {
   logger.info(`Server running on http://localhost:${PORT}`);
