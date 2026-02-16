@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],                  // Keep only what you need
-    "outDir": "./dist",                 // Compiled JS goes here
-    "rootDir": "./src",                 // Source TS files
+    "module": "CommonJS",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": false,               // Optional: no need to generate types for backend
-    "declarationMap": false,
     "sourceMap": true
   },
   "include": ["src/**/*"],
