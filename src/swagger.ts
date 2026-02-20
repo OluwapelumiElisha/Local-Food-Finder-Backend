@@ -3,6 +3,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
 import path from "path";
+import fs from "fs";
 
 // Use SERVER_URL if defined, fallback to localhost + port
 const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 4000}`;
@@ -10,10 +11,23 @@ const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.POR
 // Detect environment
 const isProd = process.env.NODE_ENV === "production";
 
-// Path to route files
-const apis = isProd
-  ? [path.join(__dirname, "./routes/*.js")] // compiled JS in dist/
-  : ["./src/routes/*.ts"];                  // TS files in dev
+const resolveApiFiles = (): string[] => {
+  const routesDir = isProd
+    ? path.join(__dirname, "routes")
+    : path.join(process.cwd(), "src", "routes");
+  const extension = isProd ? ".js" : ".ts";
+
+  if (!fs.existsSync(routesDir)) {
+    return [];
+  }
+
+  return fs
+    .readdirSync(routesDir)
+    .filter((file) => file.endsWith(extension))
+    .map((file) => path.join(routesDir, file));
+};
+
+const apis = resolveApiFiles();
 
 // Swagger options — fixed for swagger-jsdoc v6+
 const options: swaggerJSDoc.Options = {

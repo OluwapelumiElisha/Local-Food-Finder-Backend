@@ -19,20 +19,38 @@ const PORT = process.env.PORT || 4000;
 |--------------------------------------------------------------------------
 */
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  // Add your deployed frontend later
-];
+const envOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cors({
-  origin: allowedOrigins,
+const allowedOrigins = new Set([
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  ...envOrigins,
+]);
+
+const corsOptions: cors.CorsOptions = {
+  origin(origin, callback) {
+    // Allow non-browser clients (curl/Postman) and same-origin requests.
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
+  optionsSuccessStatus: 200,
+};
 
-// MUST handle preflight
-app.options("*", cors());
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 /*
 |--------------------------------------------------------------------------
