@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { envConfig } from "../config/env";
+
 
 export const protect = (
   req: Request,
@@ -24,7 +26,7 @@ export const protect = (
       return res.status(500).json({ message: "JWT_SECRET missing" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, envConfig.jwtSecret);
 
     (req as any).user = decoded;
 

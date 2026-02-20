@@ -4,9 +4,11 @@ import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
 import path from "path";
 import fs from "fs";
+import { envConfig } from "./config/env";
+
 
 // Use SERVER_URL if defined, fallback to localhost + port
-const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 4000}`;
+const SERVER_URL = process.env.SERVER_URL || `http://localhost:${envConfig.port || 4000}`;
 
 // Detect environment
 const isProd = process.env.NODE_ENV === "production";

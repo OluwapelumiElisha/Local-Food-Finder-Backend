@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { authSchema } from '../utils/validators';
 import { recordFailedLogin, resetFailedLogin } from '../middlewares/loginLimiter';
+import { envConfig } from '../config/env';
+
 
 export const handleAuth = async (req: Request, res: Response) => {
     const { email, password, location } = req.body;
@@ -37,7 +39,7 @@ export const handleAuth = async (req: Request, res: Response) => {
             message = "Sign up successful"
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '5d' });
+        const token = jwt.sign({ id: user._id }, envConfig.jwtSecret || 'secret', { expiresIn: '5d' });
         res.json({ message, token, user: { id: user._id, email: user.email } });
     } catch (err) {
         res.status(500).json({ message: "Server Error" });

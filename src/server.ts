@@ -7,11 +7,11 @@ import connectDB from './config/db';
 import routes from "./routes/index";
 import { notFound } from "./middlewares/not-found";
 import { setupSwagger } from './swagger';
+import { envConfig } from './config/env';
 
-dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = envConfig.port;
 
 /*
 |--------------------------------------------------------------------------
