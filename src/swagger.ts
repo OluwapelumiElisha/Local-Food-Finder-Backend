@@ -3,11 +3,12 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
 
-const SERVER_URL = process.env.SERVER_URL || process.env.PORT;
+// Use SERVER_URL if defined, fallback to localhost + port
+const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 4000}`;
 
-// Swagger options
+// Swagger options — fixed for swagger-jsdoc v6+
 const options: swaggerJSDoc.Options = {
-  definition: {
+  swaggerDefinition: {
     openapi: "3.0.0",
     info: {
       title: "Local Food Finder API",
@@ -16,12 +17,11 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: process.env.SERVER_URL
+        url: SERVER_URL,
       },
     ],
   },
-  // Path to your API files with annotations
-  apis: ["./src/routes/*.ts"], // <-- your route files
+  apis: ["./src/routes/*.ts"], // Path to your route files
 };
 
 // Initialize swagger-jsdoc
