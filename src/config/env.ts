@@ -1,23 +1,25 @@
 import dotenv from 'dotenv'
-dotenv.config()
+dotenv.config({ quiet: true })
 
 interface Env {
     port: number
     mongoUri: string
     jwtSecret: string
-    serverUrl: string
 }
+
+const port = Number(process.env.PORT || 4000);
 
 export const envConfig: Env = {
-    port: parseInt(process.env.PORT || '', 10),
+    port: Number.isFinite(port) ? port : 4000,
     mongoUri: process.env.MONGO_URI || '',
     jwtSecret: process.env.JWT_SECRET || '',
-    serverUrl: process.env.SERVER_URL || '',
 }
 
-// Optional: simple check to throw error if any env variable is missing
-Object.entries(envConfig).forEach(([key, value]) => {
-    if (!value) {
-        throw new Error(`Missing environment variable: ${key}`)
-    }
-})
+// Validate only required secrets/connection settings.
+if (!envConfig.mongoUri) {
+    throw new Error('Missing required environment variable: MONGO_URI');
+}
+
+if (!envConfig.jwtSecret) {
+    throw new Error('Missing required environment variable: JWT_SECRET');
+}

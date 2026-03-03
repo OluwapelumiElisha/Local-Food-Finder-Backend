@@ -1,22 +1,27 @@
 import winston from 'winston';
+import fs from 'fs';
+
+const transports: winston.transport[] = [
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    )
+  })
+];
+
+try {
+  fs.mkdirSync('logs', { recursive: true });
+  transports.push(new winston.transports.File({ filename: 'logs/error.log', level: 'error' }));
+  transports.push(new winston.transports.File({ filename: 'logs/combined.log' }));
+} catch {
+  // If file logging is unavailable in runtime, console logging is still active.
+}
 
 const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.json(), 
-  transports: [
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-  ],
+  format: winston.format.json(),
+  transports,
 });
-
-
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.prettyPrint()
-    )
-  }));
-}
 
 export default logger;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { currentUser, handleAuth, updateProfile } from '../controllers/userController';
-import { protect } from '../middlewares/auth';
+import { optionalProtect, protect } from '../middlewares/auth';
 import { loginLimiter } from '../middlewares/loginLimiter';
 
 const router = Router();
@@ -269,7 +269,7 @@ router.put('/update', protect, updateProfile);
  *                   type: string
  *                   example: Server Error
  */
-router.get('/currentUser', protect, currentUser);
+router.get('/currentUser', optionalProtect, currentUser);
 
 
 export default router;

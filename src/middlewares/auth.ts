@@ -35,3 +35,31 @@ export const protect = (
     return res.status(401).json({ message: "Token invalid or expired" });
   }
 };
+
+export const optionalProtect = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    let token: string | undefined;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token || !envConfig.jwtSecret) {
+      return next();
+    }
+
+    const decoded = jwt.verify(token, envConfig.jwtSecret);
+    (req as any).user = decoded;
+  } catch {
+    // For optional auth routes we ignore invalid/expired tokens and continue as guest.
+  }
+
+  return next();
+};
